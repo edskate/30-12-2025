@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guia Git para Shows — Estilo Edy</title>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --card:#111522;
+      --card2:#0f1320;
+      --text:#e9ecf1;
+      --muted:#a9b0c0;
+      --line:#222a3b;
+      --accent:#7c5cff;
+      --ok:#23c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    [data-theme="light"]{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --card2:#f2f4fb;
+      --text:#0f172a;
+      --muted:#56607a;
+      --line:#e3e7f3;
+      --accent:#5b5cff;
+      --shadow: 0 10px 30px rgba(20,25,35,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, rgba(124,92,255,.18), transparent 55%),
+                  radial-gradient(900px 600px at 85% 10%, rgba(35,197,94,.12), transparent 50%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      padding:22px;
+    }
+    header{
+      max-width:1100px;
+      margin:0 auto 18px auto;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(35,197,94,1));
+      box-shadow: var(--shadow);
+    }
+    h1{
+      font-size:20px;
+      margin:0;
+      letter-spacing:.2px;
+    }
+    .subtitle{margin:2px 0 0 0; color:var(--muted); font-size:13px}
+    .top-actions{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .pill{
+      background:rgba(124,92,255,.14);
+      border:1px solid rgba(124,92,255,.25);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      color:var(--text);
+      display:flex; gap:8px; align-items:center;
+    }
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background:var(--card);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      box-shadow: var(--shadow);
+      transition: transform .08s ease, border-color .2s ease;
+      font-weight:600;
+      font-size:13px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(124,92,255,.5);}
+    .btn.ghost{box-shadow:none; background:transparent;}
+    .btn.small{padding:8px 10px; border-radius:10px; font-weight:600}
+    .btn.accent{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.18), rgba(124,92,255,.08));
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 260px 1fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .wrap{grid-template-columns: 1fr;}
+    }
+    .sidebar, .content{
+      background:rgba(255,255,255,.02);
+    }
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .sidebar .panel{position:sticky; top:14px}
+    .side-head{
+      padding:14px 14px 10px 14px;
+      border-bottom:1px solid var(--line);
+      background: var(--card);
+    }
+    .search{
+      display:flex; gap:10px; align-items:center;
+      background: var(--card2);
+      border:1px solid var(--line);
+      border-radius: 12px;
+      padding:10px 12px;
+    }
+    .search input{
+      width:100%;
+      border:none; outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:14px;
+    }
+    nav{
+      padding:10px;
+      background: var(--card);
+    }
+    .tab{
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--text);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:700;
+      gap:10px;
+    }
+    .tab small{color:var(--muted); font-weight:700}
+    .tab.active{
+      background: rgba(124,92,255,.14);
+      border-color: rgba(124,92,255,.35);
+    }
+    .badge{
+      font-size:12px;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background: rgba(255,255,255,.03);
+    }
+    .content .panel{
+      background: var(--card);
+    }
+    .content-head{
+      padding:16px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .content-title{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .content-title h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .content-title p{margin:0; color:var(--muted); font-size:13px}
+    .content-body{
+      padding:16px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns: 1fr;} }
+    .card{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+      padding:14px;
+    }
+    .card h3{margin:0 0 8px 0; font-size:15px}
+    .card p{margin:0 0 10px 0; color:var(--muted); font-size:13px; line-height:1.4}
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin:10px 0 0 0;
+      padding:0;
+      list-style:none;
+    }
+    .item{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+    .item input[type="checkbox"]{
+      width:18px; height:18px; margin-top:2px;
+      accent-color: var(--accent);
+      cursor:pointer;
+    }
+    .item .txt{flex:1}
+    .item .txt b{display:block; font-size:13.5px}
+    .item .txt span{display:block; color:var(--muted); font-size:12.5px; margin-top:2px; line-height:1.35}
+    .meter{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .bar{
+      flex:1;
+      min-width:140px;
+      height:10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(124,92,255,1), rgba(35,197,94,1));
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12.5px;
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      padding:10px 10px;
+      border-radius: 14px;
+      overflow:auto;
+      white-space:pre;
+      line-height:1.4;
+    }
+    .cmdrow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .note{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(245,158,11,.35);
+      background: rgba(245,158,11,.10);
+      color: var(--text);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .ok{
+      border-color: rgba(35,197,94,.35);
+      background: rgba(35,197,94,.10);
+    }
+    .bad{
+      border-color: rgba(239,68,68,.35);
+      background: rgba(239,68,68,.10);
+    }
+    .mini{
+      font-size:12px; color:var(--muted);
+      margin-top:8px;
+    }
+    .footer-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .sep{height:1px; background:var(--line); margin:14px 0;}
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>Guia Git para Shows — Estilo Edy</h1>
+        <p class="subtitle">Backup criativo + organização de palco (HTML, PDFs, checklists e versões do show)</p>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="pill" id="todayPill">📅 <span id="todayText">—</span></div>
+      <button class="btn small ghost" id="toggleTheme">🌓 Tema</button>
+      <button class="btn small ghost" id="printBtn">🖨️ Imprimir / PDF</button>
+      <button class="btn small" id="resetBtn">♻️ Zerar progresso</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="side-head">
+          <div class="search">
+            🔎 <input id="searchInput" type="text" placeholder="Buscar no guia… (ex: merge, push, show, checklist)"/>
+          </div>
+          <div class="mini" id="searchHint">Dica: busque por “merge”, “rebase”, “pré-show”, “estrutura”.</div>
+        </div>
+
+        <nav id="navTabs">
+          <button class="tab active" data-tab="inicio">Início <span class="badge">base</span></button>
+          <button class="tab" data-tab="estrutura">Estrutura do Show <span class="badge">pastas</span></button>
+          <button class="tab" data-tab="fluxo">Fluxo Solo <span class="badge">seguro</span></button>
+          <button class="tab" data-tab="branches">Branch de Teste <span class="badge">sem medo</span></button>
+          <button class="tab" data-tab="pre">Pré-Show (final) <span class="badge">check</span></button>
+          <button class="tab" data-tab="erros">Erros comuns <span class="badge">⚠</span></button>
+          <button class="tab" data-tab="comandos">Comandos rápidos <span class="badge">copiar</span></button>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="panel">
+        <div class="content-head">
+          <div class="content-title">
+            <h2 id="sectionTitle">Início</h2>
+            <p id="sectionDesc">O Git como “backup criativo” para seu show. Simples, seguro, sem estresse.</p>
+          </div>
+          <div class="pill">🟢 Regra: <b>MERGE</b> sempre (evite rebase)</div>
+        </div>
+
+        <div class="content-body" id="contentBody">
+          <!-- conteúdo entra via JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+<script>
+  // ====== helpers ======
+  const $ = (q) => document.querySelector(q);
+  const $$ = (q) => Array.from(document.querySelectorAll(q));
+  const LS_KEY = "edy_git_show_guide_progress_v1";
+  const THEME_KEY = "edy_git_show_guide_theme_v1";
+
+  function escapeHtml(str){
+    return str.replace(/[&<>"']/g, (m)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+  }
+
+  function copyText(text){
+    navigator.clipboard.writeText(text).then(()=>{
+      toast("✅ Copiado!");
+    }).catch(()=>{
+      toast("⚠️ Não deu pra copiar (permissão do navegador).");
+    });
+  }
+
+  let toastTimer = null;
+  function toast(msg){
+    let t = document.getElementById("toast");
+    if(!t){
+      t = document.createElement("div");
+      t.id = "toast";
+      t.style.position="fixed";
+      t.style.bottom="18px";
+      t.style.left="50%";
+      t.style.transform="translateX(-50%)";
+      t.style.padding="10px 14px";
+      t.style.border="1px solid var(--line)";
+      t.style.background="var(--card)";
+      t.style.borderRadius="14px";
+      t.style.boxShadow="var(--shadow)";
+      t.style.fontWeight="700";
+      t.style.zIndex="9999";
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity="1";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{ t.style.opacity="0"; }, 1400);
+  }
+
+  // ====== data (conteúdo do guia) ======
+  const guide = {
+    inicio: {
+      title: "Início",
+      desc: "O Git como “backup criativo” para seu show. Simples, seguro, sem estresse.",
+      blocks: [
+        {
+          type:"cardgrid",
+          items:[
+            {
+              h:"🎭 Git no show = proteção do seu trabalho",
+              p:"Seu show tem muitas peças: HTML de checklist, PDFs de produção, setlists, versões do palco. Git guarda tudo e te deixa voltar atrás se algo quebrar."
+            },
+            {
+              h:"🟢 Regra do Edy (solo)",
+              p:"Trabalhe na <b>main</b> no dia a dia. Use uma branch de teste só quando for mudar algo grande. Depois faz <b>merge</b> e pronto."
+            }
+          ]
+        },
+        {
+          type:"note",
+          variant:"ok",
+          text:"📌 Frase pra lembrar: <b>Git é seu backup criativo.</b> Tudo que está no Git está protegido."
+        }
+      ]
+    },
+
+    estrutura:{
+      title:"Estrutura do Show",
+      desc:"Organização padrão de pastas para um show (HTML, PDF, Python).",
+      blocks:[
+        {
+          type:"card",
+          h:"📁 Estrutura recomendada (1 repositório por show)",
+          p:"Crie um repositório para cada show/pocket show. Assim você não mistura versões e não perde tempo procurando arquivos.",
+          code:
+`show-edy-pocket-35min/
+├─ 01-checklists/     (HTML: chegada, figurino, som, luz)
+├─ 02-setlist/        (PDF / docs: setlist, tempo total)
+├─ 03-figurinos/      (listas + referências)
+├─ 04-palco-luz/      (mapa de palco, cues, posições)
+├─ 05-audio/          (narrações, trilhas, notas)
+├─ 06-python/         (planilhas, automações, conversões)
+└─ README.md          (resumo do show + instruções)`
+        },
+        {
+          type:"note",
+          variant:"",
+          text:"💡 Dica: num projeto solo, organização vale mais que complexidade. Pastas claras = menos erro no dia do show."
+        }
+      ]
+    },
+
+    fluxo:{
+      title:"Fluxo Solo",
+      desc:"O ritual simples: editar → commit → push. (sem dor de cabeça)",
+      blocks:[
+        {
+          type:"cardgrid",
+          items:[
+            {
+              h:"🔁 Ritual diário (sempre igual)",
+              p:"<b>Editar → git add . → commit → push</b><br>Isso cria pontos de salvamento e manda pra nuvem."
+            },
+            {
+              h:"🛡️ Antes de começar a mexer",
+              p:"Rode <b>git pull</b> para atualizar seu projeto (mesmo solo). Evita bagunça entre PC e GitHub/GitLab."
+            }
+          ]
+        },
+        {
+          type:"card",
+          h:"✅ Sequência padrão (solo)",
+          p:"Use exatamente assim, toda vez:",
+          code:
+`git pull
+# (edita seus arquivos)
+git add .
+git commit -m "Describe: o que mudou (ex: checklist chegada atualizado)"
+git push`
+        }
+      ]
+    },
+
+    branches:{
+      title:"Branch de Teste",
+      desc:"Quando você quer testar sem risco (layout, recursos grandes, mudanças arriscadas).",
+      blocks:[
+        {
+          type:"note",
+          variant:"ok",
+          text:"🎯 Use branch de teste quando for mexer em coisa grande: layout novo, sistema de horário, exportar PDF, modo mobile, etc."
+        },
+        {
+          type:"card",
+          h:"🧩 Fluxo com branch (recomendado)",
+          p:"Crie uma branch, teste tudo, e depois junte com <b>merge</b> na main.",
+          code:
+`git checkout -b teste-layout
+# (edita e testa)
+git add .
+git commit -m "Teste: novo layout do checklist"
+git checkout main
+git merge teste-layout
+git push`
+        },
+        {
+          type:"note",
+          variant:"bad",
+          text:"🚫 Se não gostou do teste: volte pra main e apague a branch de teste (sem dó)."
+        },
+        {
+          type:"card",
+          h:"🗑️ Apagar branch de teste (quando não usar)",
+          p:"Somente depois de voltar para main:",
+          code:
+`git checkout main
+git branch -D teste-layout`
+        }
+      ]
+    },
+
+    pre:{
+      title:"Pré-Show (final)",
+      desc:"Checklist Git de última hora — pra você não ser pego de surpresa.",
+      blocks:[
+        {
+          type:"checklist",
+          id:"pre_show",
+          title:"✅ Checklist Git — Antes do show",
+          items:[
+            {k:"Commit final do dia", b:"Fiz um commit final com o estado atual do show", s:"Ex: “Pré-show: checklist + setlist final”"},
+            {k:"Push confirmado", b:"Enviei para GitHub/GitLab (push) e verifiquei no site", s:"Não confie só no terminal; confere online."},
+            {k:"Arquivos essenciais no repo", b:"Checklists, setlist, figurinos e cues estão no projeto", s:"Se algo ficar fora, você pode perder no dia do show."},
+            {k:"Tag de versão (opcional)", b:"Marquei a versão do show (ex: v1.0-pre-show)", s:"Fica fácil voltar exatamente para essa versão."},
+            {k:"Backup extra (opcional)", b:"Exportei/Salvei PDFs críticos fora também", s:"Ex: setlist final e ordem de serviço."}
+          ],
+          tips:[
+            {t:"Para tag de versão:", code:`git tag v1.0-pre-show\ngit push --tags`},
+          ]
+        }
+      ]
+    },
+
+    erros:{
+      title:"Erros comuns",
+      desc:"Os 3 erros que mais quebram o rolê (e como evitar).",
+      blocks:[
+        {
+          type:"card",
+          h:"❌ Erro #1: rebase depois de push",
+          p:"Depois que você deu <b>push</b>, rebase reescreve o histórico e pode dar rejeição no push (non-fast-forward).",
+          code:
+`# erro típico
+git push origin teste
+git rebase main   # ❌ perigoso
+git push          # pode dar reject`
+        },
+        {
+          type:"note",
+          variant:"bad",
+          text:"Regra de ouro: <b>evite rebase</b> em projetos de show. Use <b>merge</b>."
+        },
+        {
+          type:"card",
+          h:"⚠️ Erro #2: esquecer commit (só editou)",
+          p:"Se não tiver commit, não tem “ponto de salvamento”. No dia do show isso vira caos.",
+          code:`git status\n# se tiver mudanças: git add . && git commit -m "..." && git push`
+        },
+        {
+          type:"card",
+          h:"⚠️ Erro #3: mensagem de commit ruim",
+          p:"Mensagem tipo “update” não ajuda. Faça mensagem como se fosse uma nota de produção.",
+          code:
+`✅ "Checklist chegada: adiciona horário do show 15:00"
+✅ "Setlist: ajusta tempo total para 35 min"
+✅ "Luz: adiciona cue Billie Jean piso completo"`
+        }
+      ]
+    },
+
+    comandos:{
+      title:"Comandos rápidos",
+      desc:"Copie e cole. (feito pra backstage)",
+      blocks:[
+        {
+          type:"cmds",
+          groups:[
+            {
+              name:"📌 Básico do dia",
+              cmds:[
+                {label:"Ver status", code:"git status"},
+                {label:"Atualizar do remoto", code:"git pull"},
+                {label:"Salvar tudo", code:"git add ."},
+                {label:"Commit", code:'git commit -m "Mensagem clara"'},
+                {label:"Enviar", code:"git push"},
+              ]
+            },
+            {
+              name:"🌿 Branch de teste",
+              cmds:[
+                {label:"Criar branch", code:"git checkout -b teste"},
+                {label:"Voltar main", code:"git checkout main"},
+                {label:"Merge", code:"git merge teste"},
+                {label:"Apagar branch", code:"git branch -D teste"},
+              ]
+            },
+            {
+              name:"📊 Git graph (histórico)",
+              cmds:[
+                {label:"Graph simples", code:"git log --oneline --graph --all"},
+                {label:"Graph com detalhes", code:"git log --graph --decorate --oneline --all"},
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  // ====== progress storage ======
+  const state = {
+    tab: "inicio",
+    progress: JSON.parse(localStorage.getItem(LS_KEY) || "{}"),
+    theme: localStorage.getItem(THEME_KEY) || "dark",
+    query: ""
+  };
+
+  function saveProgress(){
+    localStorage.setItem(LS_KEY, JSON.stringify(state.progress));
+  }
+
+  function setTheme(theme){
+    state.theme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+    document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");
+    toast(theme === "light" ? "☀️ Tema claro" : "🌙 Tema escuro");
+  }
+
+  // ====== render ======
+  function renderTab(tab){
+    state.tab = tab;
+    const section = guide[tab];
+    $("#sectionTitle").textContent = section.title;
+    $("#sectionDesc").textContent = stripHtml(section.desc);
+
+    // highlight active tab
+    $$("#navTabs .tab").forEach(btn=>{
+      btn.classList.toggle("active", btn.dataset.tab === tab);
+    });
+
+    // render blocks
+    const container = $("#contentBody");
+    container.innerHTML = "";
+
+    const blocks = filterBlocksBySearch(section.blocks, state.query);
+    if(state.query && blocks.length === 0){
+      container.innerHTML = `<div class="note">Nada encontrado nesta seção para <b>${escapeHtml(state.query)}</b>. Tente outra aba ou outro termo.</div>`;
+      return;
+    }
+
+    blocks.forEach(block=>{
+      if(block.type === "cardgrid"){
+        const grid = document.createElement("div");
+        grid.className = "grid";
+        block.items.forEach(it=>{
+          const c = document.createElement("div");
+          c.className = "card";
+          c.innerHTML = `<h3>${it.h}</h3><p>${it.p}</p>`;
+          grid.appendChild(c);
+        });
+        container.appendChild(grid);
+        return;
+      }
+
+      if(block.type === "card"){
+        const c = document.createElement("div");
+        c.className = "card";
+        c.innerHTML = `<h3>${block.h}</h3><p>${block.p}</p>`;
+        if(block.code){
+          c.appendChild(codeBox(block.code));
+        }
+        container.appendChild(c);
+        return;
+      }
+
+      if(block.type === "note"){
+        const n = document.createElement("div");
+        n.className = "note " + (block.variant || "");
+        n.innerHTML = block.text;
+        container.appendChild(n);
+        return;
+      }
+
+      if(block.type === "checklist"){
+        container.appendChild(renderChecklist(block));
+        return;
+      }
+
+      if(block.type === "cmds"){
+        container.appendChild(renderCmdGroups(block.groups));
+        return;
+      }
+    });
+  }
+
+  function stripHtml(html){
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  }
+
+  function codeBox(code){
+    const wrap = document.createElement("div");
+    wrap.className = "cmdrow";
+    const pre = document.createElement("div");
+    pre.className = "kbd";
+    pre.textContent = code;
+    const btn = document.createElement("button");
+    btn.className = "btn small accent";
+    btn.textContent = "📋 Copiar";
+    btn.onclick = () => copyText(code);
+
+    wrap.appendChild(pre);
+    wrap.appendChild(btn);
+    wrap.style.alignItems = "stretch";
+    wrap.style.justifyContent = "stretch";
+    wrap.querySelector(".kbd").style.flex = "1";
+
+    return wrap;
+  }
+
+  function renderChecklist(block){
+    const wrap = document.createElement("div");
+    wrap.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = block.title;
+    wrap.appendChild(title);
+
+    const ul = document.createElement("ul");
+    ul.className = "list";
+
+    const store = state.progress[block.id] || {};
+    const total = block.items.length;
+
+    block.items.forEach((it, idx)=>{
+      const li = document.createElement("li");
+      li.className = "item";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!store[it.k];
+
+      cb.addEventListener("change", ()=>{
+        const st = state.progress[block.id] || {};
+        st[it.k] = cb.checked;
+        state.progress[block.id] = st;
+        saveProgress();
+        updateMeter();
+      });
+
+      const txt = document.createElement("div");
+      txt.className = "txt";
+      txt.innerHTML = `<b>${it.b}</b><span>${it.s}</span>`;
+
+      li.appendChild(cb);
+      li.appendChild(txt);
+      ul.appendChild(li);
+    });
+
+    wrap.appendChild(ul);
+
+    // meter
+    const meter = document.createElement("div");
+    meter.className = "meter";
+    meter.innerHTML = `
+      <span id="meterText">Progresso: 0/${total}</span>
+      <div class="bar"><div id="meterBar"></div></div>
+      <span class="badge" id="meterPct">0%</span>
+    `;
+    wrap.appendChild(meter);
+
+    // tips
+    if(block.tips && block.tips.length){
+      const sep = document.createElement("div");
+      sep.className = "sep";
+      wrap.appendChild(sep);
+
+      block.tips.forEach(t=>{
+        const note = document.createElement("div");
+        note.className = "note ok";
+        note.innerHTML = `<b>${t.t}</b>`;
+        wrap.appendChild(note);
+        wrap.appendChild(codeBox(t.code));
+      });
+    }
+
+    // footer actions
+    const footer = document.createElement("div");
+    footer.className = "footer-actions";
+    const doneBtn = document.createElement("button");
+    doneBtn.className = "btn";
+    doneBtn.textContent = "✅ Marcar tudo";
+    doneBtn.onclick = ()=>{
+      const st = state.progress[block.id] || {};
+      block.items.forEach(it => st[it.k] = true);
+      state.progress[block.id] = st;
+      saveProgress();
+      renderTab(state.tab);
+      toast("✅ Checklist completo!");
+    };
+
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "btn ghost";
+    clearBtn.textContent = "🧽 Limpar checklist";
+    clearBtn.onclick = ()=>{
+      state.progress[block.id] = {};
+      saveProgress();
+      renderTab(state.tab);
+      toast("♻️ Checklist limpo.");
+    };
+
+    footer.appendChild(doneBtn);
+    footer.appendChild(clearBtn);
+    wrap.appendChild(footer);
+
+    function updateMeter(){
+      const st = state.progress[block.id] || {};
+      const done = block.items.filter(it=>!!st[it.k]).length;
+      const pct = total ? Math.round((done/total)*100) : 0;
+      $("#meterText").textContent = `Progresso: ${done}/${total}`;
+      $("#meterBar").style.width = pct + "%";
+      $("#meterPct").textContent = pct + "%";
+    }
+    setTimeout(updateMeter, 0);
+
+    return wrap;
+  }
+
+  function renderCmdGroups(groups){
+    const wrap = document.createElement("div");
+    wrap.className = "grid";
+
+    groups.forEach(g=>{
+      const c = document.createElement("div");
+      c.className = "card";
+      c.innerHTML = `<h3>${g.name}</h3><p>Comandos prontos para copiar.</p>`;
+
+      g.cmds.forEach(cmd=>{
+        const box = document.createElement("div");
+        box.className = "item";
+        box.style.alignItems = "center";
+
+        const left = document.createElement("div");
+        left.className = "txt";
+        left.innerHTML = `<b>${cmd.label}</b><span class="kbd" style="margin-top:6px; padding:8px 10px; border-radius:12px;">${escapeHtml(cmd.code)}</span>`;
+
+        const btn = document.createElement("button");
+        btn.className = "btn small accent";
+        btn.textContent = "📋 Copiar";
+        btn.onclick = ()=>copyText(cmd.code);
+
+        box.appendChild(left);
+        box.appendChild(btn);
+
+        c.appendChild(box);
+      });
+
+      wrap.appendChild(c);
+    });
+
+    return wrap;
+  }
+
+  function filterBlocksBySearch(blocks, query){
+    if(!query) return blocks;
+    const q = query.toLowerCase();
+    // crude: stringify blocks and check
+    return blocks.filter(b => JSON.stringify(b).toLowerCase().includes(q));
+  }
+
+  // ====== events ======
+  $("#navTabs").addEventListener("click", (e)=>{
+    const btn = e.target.closest(".tab");
+    if(!btn) return;
+    renderTab(btn.dataset.tab);
+  });
+
+  $("#searchInput").addEventListener("input", (e)=>{
+    state.query = e.target.value.trim();
+    renderTab(state.tab);
+  });
+
+  $("#toggleTheme").addEventListener("click", ()=>{
+    setTheme(state.theme === "light" ? "dark" : "light");
+  });
+
+  $("#printBtn").addEventListener("click", ()=>{
+    window.print();
+  });
+
+  $("#resetBtn").addEventListener("click", ()=>{
+    if(confirm("Zerar o progresso salvo (checklists)?")){
+      state.progress = {};
+      saveProgress();
+      renderTab(state.tab);
+      toast("♻️ Progresso zerado.");
+    }
+  });
+
+  // ====== init ======
+  // date pill
+  (function(){
+    const now = new Date();
+    const fmt = new Intl.DateTimeFormat("pt-BR", { weekday:"long", year:"numeric", month:"long", day:"2-digit" });
+    $("#todayText").textContent = fmt.format(now);
+  })();
+
+  setTheme(state.theme);
+  renderTab(state.tab);
+</script>
+</body>
+</html>
